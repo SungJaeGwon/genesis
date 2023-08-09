@@ -1,0 +1,27 @@
+리파지토리
+genesis
+
+오리진(리파지토리 웹주소 URL)
+https://github.com/SungJaeGwon/genesis.git
+
+명령어 우분투(윈도우에서 리눅스 명령어)
+깃배쉬(gitbash) 프로그램 설치
+
+
+git-scm.com
+
+1. 깃 설정 
+git init
+목록보기 대신 숨김목록까지 모두 보기
+ls -la
+
+2. 환경설정 
+본인 아이디(name) 등록
+본인 이메일(email) 등록
+
+git config user.name "SungJaeGwon"
+git config user.email "gksmf519@naver.com"
+
+git config user.name
+git config user.email
+

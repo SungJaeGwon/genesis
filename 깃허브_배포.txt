@@ -94,7 +94,7 @@ remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
 git add . => .은 all
 
 6. 커밋
-git commit -m '제네시스 메인슬라이드'
+git commit -m '모바일 터치 이벤트 추가'
 
 7. 푸쉬
 git push origin master

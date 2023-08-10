@@ -19,9 +19,9 @@
             let sizeX = winW / 2;            
             
 
-            // const slideContainer = $('#section1 .slide-container');
             const nextBtn = $('#section1 .next-btn');            
             const prevBtn = $('#section1 .prev-btn');
+            const slideContainer = $('#section1 .slide-container');
             const slideWrap = $('#section1 .slide-wrap');
             const slideView = $('#section1 .slide-view');
             const slideImg = $('#section1 .slide img');
@@ -29,33 +29,101 @@
             const stopBtn = $('#section1 .stop-btn');
             const playBtn = $('#section1 .play-btn');                        
             const n = ($('#section1 .slide').length-2)-1;
-            const imgRate = 1.6110761485210825;  /* slideImg.innerWidth() / winW; */  // 창너비(1903)에 대한 이미지(2560) 비율 구하는 법 -> 이때 비율값은 변수가 아닌 상수로 적어야 한다.
-            const imgTranRate = 0.1265625;  // 이미지(2560) 크기에 대한 -translateX(-값)의 비율 = transform: translateX(-324px);
-
-            
-             
-            // console.log('슬라이드 이미지 너비' + slideImg.innerWidth());  2560
-            // console.log('슬라이드 이미지 비율' + imgRate);  1.4504249291784703
-            // transform: translateX(-324px);
-
-            // 슬라이드 이미지 크기조절 => 창 크기에 반응하는 이미지 크기
+            const imgRate = 1.6110761485210825;  
+            const imgTranRate = 0.1265625; 
             let x = (imgRate * winW) * imgTranRate;
+
             slideImg.css({width: imgRate * winW, transform: `translateX(${-x}px)` });
 
-            // console.log(imgRate * winW);
-            // console.log( winW);
-            // console.log( imgRate);
-
-            // 창크기에 자동으로 반응하는 이미지 크기와 translateX
             $(window).resize(function(){
                 winW = $(window).innerWidth();
                 x = (imgRate * winW) * imgTranRate;
                 slideImg.css({width: imgRate * winW, transform: `translateX(${-x}px)` });
-            });  // resize = 크기가 1px만 변해도 자동으로 반응하는 키워드
+            }); 
 
 
+            // 터치스와이프
+            // 마우스 터치 스와이프(데스크탑)
+            // 드래그 앤 드롭까지 추가
+            slideContainer.on({
+                touchstart(e){    /* 마우스에서 터치로 바꾸기 */
+                    let winW = $(window).innerWidth();
+                    sizeX = winW / 2;  
+                    mouseDown = e.originalEvent.changedTouches[0].clientX;    /* 기존 e.clientX를 e.originalEvent.changedTouches[0].clientX;로 변경  */
+                    dragStart = e.originalEvent.changedTouches[0].clientX - (slideWrap.offset().left + winW);
+                    mDown = true;
+                    slideView.css({cursor: 'grabbing' });
+                },
+                touchend(e){    /* 마우스에서 터치로 바꾸기 */
+                    mouseUp = e.originalEvent.changedTouches[0].clientX;
+                    if(mouseDown-mouseUp > sizeX){  
+                        clearInterval(setId);  
+                        if(!slideWrap.is(':animated')){  
+                            nextCount();
+                        }
+                    }
 
-            slideView.on({
+                    if(mouseDown-mouseUp < -sizeX){ 
+                        clearInterval(setId);   
+                        if(!slideWrap.is(':animated')){ 
+                            prevCount();
+                        }                       
+                    }  
+                    if ( mouseDown - mouseUp >= -sizeX && mouseDown - mouseUp <= sizeX ) {
+                        mainSlide();
+                    }          
+                    mDown = false;
+                    slideView.css({cursor: 'grab' });                    
+                },
+                
+                touchmove(e){   /* 마우스에서 터치로 바꾸기 */
+                    dragEnd = e.originalEvent.changedTouches[0].clientX;
+                    if(!mDown) return;
+                    slideWrap.css({left: dragEnd - dragStart});
+                }
+            });
+
+            // 데스크톱 도큐먼트 예외처리
+            $(document).on({
+                mouseup(e){ 
+                    if(!mDown) return;
+                    mouseUp = e.clientX;
+                    if(mouseDown-mouseUp > sizeX){  
+                        clearInterval(setId);  
+                        if(!slideWrap.is(':animated')){  
+                            nextCount();
+                        }
+                    }
+
+                    if(mouseDown-mouseUp < -sizeX){ 
+                        clearInterval(setId);   
+                        if(!slideWrap.is(':animated')){ 
+                            prevCount();
+                        }                       
+                    }  
+                              
+                    mDown = false;
+                    slideView.css({cursor: 'grab' });                    
+                }
+            });
+
+            // ★손가락 터치 이벤트 확인하기 => 태블릿과 모바일에서만 이벤트가 실행된다. (테스트하기)
+            // slideContainer.on({
+            //     touchstart(e){          /* 이벤트는 카멜케이스 불가 무조건 소문자 */
+            //         console.log(e.originalEvent.changedTouches[0].clientX);  // ★모바일에서 clientX의 좌표 가져오는 방법 -> 데스트톱은 (e.clientX)
+            //     },     
+            //     touchend(e){
+            //         console.log(e.originalEvent.changedTouches[0].clientX);  // ★모바일에서 clientX의 좌표 가져오는 방법 -> 데스트톱은 (e.clientX)
+            //     },
+            //     touchmove(e){
+            //         console.log(e.originalEvent.changedTouches[0].clientX);
+            //     }
+            // });
+            // 확인하는 순서 : 라이브 서버로 열기 -> F12 반응형으로 켜기 -> 먼저 console.log(e);로 이벤트 발생시키기 -> 콘솔 아래 뜨는거 체크 -> originalEvent와 changedTouches를 가져오고 [0]은 배열, -> console.log(e.originalEvent.changedTouches[0].clientX); 이렇게 콘솔로 좌표값 뜨는지 확인 -> mouseup, end, move를 touchstart, end, move로 바꾸기
+
+
+           // 테블릿 & 모바일 : 손가락(핑거링) 드래그앤드롭
+           slideView.on({
                 mousedown(e){
                     let winW = $(window).innerWidth();
                     sizeX = winW / 2;  
@@ -90,29 +158,6 @@
                     dragEnd = e.clientX;
                     if(!mDown) return;
                     slideWrap.css({left: dragEnd - dragStart});
-                }
-            });
-
-            $(document).on({
-                mouseup(e){ 
-                    if(!mDown) return;
-                    mouseUp = e.clientX;
-                    if(mouseDown-mouseUp > sizeX){  
-                        clearInterval(setId);  
-                        if(!slideWrap.is(':animated')){  
-                            nextCount();
-                        }
-                    }
-
-                    if(mouseDown-mouseUp < -sizeX){ 
-                        clearInterval(setId);   
-                        if(!slideWrap.is(':animated')){ 
-                            prevCount();
-                        }                       
-                    }  
-                              
-                    mDown = false;
-                    slideView.css({cursor: 'grab' });                    
                 }
             });
 
@@ -224,19 +269,18 @@
             let winW = $(window).innerWidth();
             section2container.innerWidth();  
 
-            resizeFn();  // 로딩 시 한 번 실행, 함수는 명령어의 묶음이다.
+            resizeFn();  
             function resizeFn(){
                 winW = $(window).innerWidth();                    
-                // 창너비(winW)가  // 1642px 이하에서 패딩 좌측값 0으로 설정
                 if(winW <= 1642){                          
-                    if(winW > 1280){   // 1280px 초과에서는 슬라이드가 3개
+                    if(winW > 1280){   
                         slideWidth = (section2container.innerWidth()+(20+20))/3;
                     }   
-                    else{   // 1280px 이하에서는 슬라이드가 3개에서 1개로 바뀜
+                    else{   
                         slideWidth = (section2container.innerWidth()+(20+20))/1;
                     }                               
                 }
-                else{  // 이하 winW <= 1642
+                else{ 
                     slideWidth = (section2container.innerWidth()-198+20+20)/3; 
                 }
                 
@@ -244,16 +288,14 @@
                 slide.css({width: slideWidth, height: slideWidth * heightRate}); 
                 slideH3.css({fontSize: slideWidth*0.07}); 
                 slideH4.css({fontSize: slideWidth*0.03}); 
-                mainSlide();  // 메인슬라이드에 너비 전달하기 위해 가져옴
+                mainSlide();  
             }
-            
-            // 가로 세로 크기가 1px만 변경되도 실행된다.
-            // 크기가 변경되지 않으면 실행하지 않는다. 
+
             $(window).resize(function(){                
                 resizeFn();
             });
 
-
+            // 데스크탑 터치 스와이프 & 드래그앤 드롭
             slideContainer.on({
                 mousedown (e){
                     slideView.css({cursor: 'grabbing' });
@@ -298,6 +340,35 @@
                         mainSlide();
                     }
                
+                }
+            });
+
+            // 태블릿, 모바일 터치 스와이프 & 드래그앤 드롭
+            slideContainer.on({     /* slideContainer 복사해오기 */
+                touchstart (e){     /* mouse를 터치로 바꾸기 */
+                    slideView.css({cursor: 'grabbing' });
+                    mDown = true;
+                    touchStart = e.originalEvent.changedTouches[0].clientX;          /* originalEvent.changedTouches[0].를 clientX 앞에 붙여넣기  */                         
+                    dragStart = e.originalEvent.changedTouches[0].clientX - (slideWrap.offset().left - offsetL);
+                },
+                touchend (e){
+                    slideView.css({cursor: 'grab' });                    
+                    touchEnd = e.originalEvent.changedTouches[0].clientX;
+                    if(touchStart-touchEnd > sizeX){
+                        nextCount();
+                    }
+                    if(touchStart-touchEnd < -sizeX){
+                        prevCount();
+                    }
+                    if ( touchStart - touchEnd >= -sizeX && touchStart - touchEnd <= sizeX) {
+                        mainSlide();
+                    }
+                    mDown = false;                    
+                },
+                touchmove(e) {
+                    if(!mDown) return;
+                    dragEnd = e.originalEvent.changedTouches[0].clientX;
+                    slideWrap.css({left: dragEnd - dragStart});
                 }
             });
 

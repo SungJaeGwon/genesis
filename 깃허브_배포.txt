@@ -1,3 +1,9 @@
+★ 닷홈
+SungJaeGwon.dothome.co.kr/genesis
+gksmf519.dothome.co.kr/genesis
+
+
+
 리파지토리
 genesis
 
@@ -10,18 +16,101 @@ https://github.com/SungJaeGwon/genesis.git
 
 git-scm.com
 
-1. 깃 설정 
+1. 깃 설정(목적 : 버전관리==형상관리, 협업)
 git init
-목록보기 대신 숨김목록까지 모두 보기
+
+2.목록보기 대신 숨김목록까지 모두 보기
 ls -la
 
-2. 환경설정 
+
+3. 환경설정 
 본인 아이디(name) 등록
 본인 이메일(email) 등록
 
 git config user.name "SungJaeGwon"
 git config user.email "gksmf519@naver.com"
-
+확인
 git config user.name
 git config user.email
+4. 원격으로 오리진 등록(추가)
+http://
+https:// ssl 웹보안 인증서가 있음
 
+https://github.com/SungJaeGwon/genesis.git   => 오리진, 프론트엔드
+깃허브에 입력된 정보가 http와 https는 다르기 때문에 공유 불가 = CORS(크로스 오리진 리소스 쉐어)
+따라서 이걸 가능하게 해주는 방법 
+ - 프록시 서버
+ - 오리진 헤더코딩 사용가능하도록 정책
+http://sungjae.co.kr/member.php => 백엔드
+http://sungjae.co.kr/member.jsp => 백엔드
+
+추가
+git remote add origin https://github.com/SungJaeGwon/genesis.git
+
+삭제 하는법(오리진 주소가 잘못 기록된 경우 삭제하고 다시 추가)
+git remote remove origin
+삭제 됐는지 확인
+git remote -v
+
+확인
+git remote -v
+https://github.com/SungJaeGwon/genesis.git (fetch)
+https://github.com/SungJaeGwon/genesis.git (push)
+
+clear 터미널 화면 지우기(청소)
+
+저장된 내용 총 확인하는 방법
+git config --list
+
+$ git config --list
+diff.astextplain.textconv=astextplain
+filter.lfs.clean=git-lfs clean -- %f
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+http.sslbackend=openssl
+http.sslcainfo=C:/Program Files/Git/mingw64/etc/ssl/certs/ca-bundle.crt
+core.autocrlf=true
+core.fscache=true
+core.symlinks=false
+pull.rebase=false
+credential.helper=manager
+credential.https://dev.azure.com.usehttppath=true
+init.defaultbranch=master
+core.repositoryformatversion=0
+core.filemode=false
+core.bare=false
+core.logallrefupdates=true
+core.symlinks=false
+core.ignorecase=true
+user.name=SungJaeGwon
+user.email=gksmf519@naver.com
+remote.origin.url=https://github.com/SungJaeGwon/genesis.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+
+
+★5~7번을 합쳐서 add commit push 라고 한다.
+5. 스테이징
+git add . => .은 all
+
+6. 커밋
+git commit -m '제네시스 메인슬라이드'
+
+7. 푸쉬
+git push origin master
+
+8. 인증 : 인증이 되어야 푸쉬가 완료된다.
+window키 -> 설정 -> windows 자격 증명 관리 검색 -> github 웹주소가 있고 본인의 user.name과 user.password가 저장되어 관리된다. 
+한 컴퓨터에서 여러 사용자가 이용 시 추가 등록해서 사용 가능하다.
+
+9. 새로고침 : 올라온 파일 확인
+푸쉬한 모든 데이터 확인
+
+10. settings 클릭 
+
+11. 좌측 카테고리 메뉴 중 pages 클릭 
+
+12. GitHub Pages -> 아래 중간에 Branch에서 None으로 되어있다면 master로 변경 -> Save 클릭 -> 1분~3분 정도 대기 -> 새로고침
+
+13. 상단에 배포주소가 나타난다. Visit site 클릭 -> 배포된 홈페이지가 나타난다.
+https://sungjaegwon.github.io/genesis/

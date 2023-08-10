@@ -48,7 +48,7 @@
             slideContainer.on({
                 touchstart(e){    /* 마우스에서 터치로 바꾸기 */
                     let winW = $(window).innerWidth();
-                    sizeX = winW / 2;  
+                    sizeX = winW / 3;  
                     mouseDown = e.originalEvent.changedTouches[0].clientX;    /* 기존 e.clientX를 e.originalEvent.changedTouches[0].clientX;로 변경  */
                     dragStart = e.originalEvent.changedTouches[0].clientX - (slideWrap.offset().left + winW);
                     mDown = true;
@@ -221,6 +221,7 @@
                 });
             });
 
+
             stopBtn.on({
                 click(e){
                     e.preventDefault();
@@ -246,7 +247,7 @@
             let dragStart = null;
             let dragEnd = null;
             let mDown = false;
-            let sizeX = 300;
+            let sizeX = 100;
             
 
             const slideContainer = $('#section2 .slide-container'); 
@@ -263,9 +264,11 @@
             const subMenu = $('#section2 .sub-menu');  
             const materialIcons = $('#section2 .select-btn .material-icons');  
             const heightRate = 0.884545392;
-
+            
+            let n = slide.length;  // 슬라이드 전체 개수는 10개
             let offsetL = slideWrap.offset().left;
             let slideWidth;
+            
             let winW = $(window).innerWidth();
             section2container.innerWidth();  
 
@@ -273,11 +276,26 @@
             function resizeFn(){
                 winW = $(window).innerWidth();                    
                 if(winW <= 1642){                          
-                    if(winW > 1280){   
+                    if(winW > 1280){   // 화면에 보이는 슬라이드 개수는 3개 
                         slideWidth = (section2container.innerWidth()+(20+20))/3;
+                        n = slide.length-2;  /* 변수를 등록 */  //10/1-2 = 8
+                        //페이지버튼 제어(개수) 8개인 경우 / 10개인 경우
+                        pageBtn.css({ display: 'none' });  // 10개 모두 숨김
+                        for(let i=0; i<n; i++){
+                            pageBtn.eq(i).css({ display: 'block' });   /* 페이지 버튼 9번째 10째가 안보임 즉, 8개만 보임*/
+                        }   
+                        cnt = 0;  
+                        if(cnt>=7) {
+                            cnt = 7;
+                        }
                     }   
                     else{   
                         slideWidth = (section2container.innerWidth()+(20+20))/1;
+                        n = slide.length;   /* 변수를 등록 */  //10/1
+                        pageBtn.css({ display: 'block' }); /* 페이지 버튼이 모두 보여라 */
+                        // for(let i=0; i<n; i++){
+                        //     pageBtn.eq(i).css({ display: 'block' });   /* 페이지 버튼 9번째 10째가 보임 즉, 10개가 모두 보임*/
+                        // }
                     }                               
                 }
                 else{ 
@@ -287,7 +305,9 @@
                 slideWrap.css({width: slideWidth*10}); 
                 slide.css({width: slideWidth, height: slideWidth * heightRate}); 
                 slideH3.css({fontSize: slideWidth*0.07}); 
-                slideH4.css({fontSize: slideWidth*0.03}); 
+                slideH4.css({fontSize: slideWidth*0.03});
+                
+                
                 mainSlide();  
             }
 
@@ -388,7 +408,7 @@
 
             function nextCount(){
                 cnt++;
-                if(cnt > 7) {cnt=7};
+                if(cnt > n-1) {cnt=n-1};  /* if(cnt > 7) {cnt=7}; 를 변수로 변경해야함 */
                 mainSlide();
             }
 

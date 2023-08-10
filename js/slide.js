@@ -265,7 +265,7 @@
             const materialIcons = $('#section2 .select-btn .material-icons');  
             const heightRate = 0.884545392;
             
-            let n = slide.length;  // 슬라이드 전체 개수는 10개
+            let n = slide.length-2;  // 슬라이드 전체 개수는 8개가 된다.
             let offsetL = slideWrap.offset().left;
             let slideWidth;
             
@@ -284,9 +284,9 @@
                         for(let i=0; i<n; i++){
                             pageBtn.eq(i).css({ display: 'block' });   /* 페이지 버튼 9번째 10째가 안보임 즉, 8개만 보임*/
                         }   
-                        cnt = 0;  
-                        if(cnt>=7) {
-                            cnt = 7;
+                        // cnt = 0;  
+                        if(cnt>=n-1) {  // 7
+                            cnt = n-1;
                         }
                     }   
                     else{   
@@ -298,8 +298,12 @@
                         // }
                     }                               
                 }
-                else{ 
+                else{ // 1642보다 큰 경우 8개만 보여라
                     slideWidth = (section2container.innerWidth()-198+20+20)/3; 
+                    pageBtn.css({ display: 'none' });  // 10개 모두 숨김
+                        for(let i=0; i<n; i++){
+                            pageBtn.eq(i).css({ display: 'block' });   /* 페이지 버튼 9번째 10째가 안보임 즉, 8개만 보임*/
+                        }
                 }
                 
                 slideWrap.css({width: slideWidth*10}); 
